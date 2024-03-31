@@ -1,0 +1,11 @@
+.body{
+    background-image: url('https://wallpapers.com/images/featured/hd-a5u9zq0a0ymy2dug.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+    height: 100vh;
+}
+.card{
+    backdrop-filter: blur(10px);
+    background: rgb(255, 255, 255, .1);
+}
