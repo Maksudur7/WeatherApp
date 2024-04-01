@@ -14,6 +14,8 @@ const Home = () => {
     const [search, setSearch] = useState("")
     const [allDayData, setAllDayData] = useState([])
     const [tem, setTem] = useState(data?.main?.temp)
+    const [locationName, setLocationName] = useState(null);
+    const [error, setError] = useState(null);
     const {
         register,
         handleSubmit,
@@ -23,9 +25,6 @@ const Home = () => {
         key: `b1605d6bdb8482fa40b1f0f850c0581a`,
         base: `https://api.openweathermap.org/data/2.5`
     }
-
-    'https://api.openweathermap.org/data/2.5/weather?q=London,uk&APPID=b1605d6bdb8482fa40b1f0f850c0581a'
-
     useEffect(() => {
         fetch(`${api.base}/weather?q=${search}&units=metric&APPID=${api.key}`)
             .then((res) => res.json())
@@ -36,17 +35,44 @@ const Home = () => {
         fetch(`${api.base}/forecast?q=${search}&units=metric&APPID=${api.key}`)
             .then((res) => res.json())
             .then((forecastData) => {
-                // console.log("5-day forecast data:", forecastData);
+                console.log("5-day forecast data:", forecastData);
                 setAllDayData(forecastData)
             });
+
+        if (!navigator.geolocation) {
+            setError('Geolocation is not supported by your browser');
+            return;
+        }
+
+        // Get the current position
+        const success = async (position) => {
+            const { latitude, longitude } = position.coords;
+            try {
+                const response = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch location data');
+                }
+                const data = await response.json();
+                setLocationName(data.locality);
+            } catch (error) {
+                setError('Failed to retrieve location name');
+            }
+        };
+
+        const failure = (error) => {
+            setError('Unable to retrieve your location');
+        };
+
+        navigator.geolocation.getCurrentPosition(success, failure);
     }, [api.base, api.key, search])
 
-
+    const location = navigator.geolocation
+    console.log(location);
 
     if (data.cod === undefined) {
         return;
     }
-    console.log(allDayData);
+    console.log(data);
 
 
 
@@ -54,6 +80,15 @@ const Home = () => {
 
     return (
         <div className="body pt-10" >
+            <div className=" ml-10">
+                {error ? (
+                    <p>{error}</p>
+                ) : locationName ? (
+                    <p className="text-white text-3xl font-bold">{locationName}</p>
+                ) : (
+                    <p>Loading...</p>
+                )}
+            </div>
             <div className="relative md:max-w-xl mx-5 md:mx-auto md:mt-20 card border md:h-96  rounded-md p-2 md:py-0 ">
                 <div className="md:flex flex-col md:flex-row mt-5 md:mt-0 justify-center items-center md:pt-10 gap-5 ">
                     <div className="flex justify-center sm:justify-start">
@@ -111,6 +146,7 @@ const Home = () => {
                     }
 
                 </div>
+
             </div>
             <div className="mt-20">
                 {

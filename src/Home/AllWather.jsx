@@ -8,7 +8,7 @@ const AllWather = ({ allDayData }) => {
     }
 
     const renderedData = allDayData?.list?.map((element) => {
-        console.log(element);
+        // console.log(element);
         let weatherIcon = null;
         if (element?.weather) {
             // Map weather condition to appropriate icon
@@ -43,7 +43,7 @@ const AllWather = ({ allDayData }) => {
                     backgroundImage = "";
             }
         }
-        console.log(element?.main?.temp);
+        // console.log(element?.main?.temp);
         const date = element?.dt_txt
         const temperature = element?.main?.temp
         const description = element?.weather[0].description
@@ -51,7 +51,7 @@ const AllWather = ({ allDayData }) => {
         return { weatherIcon, backgroundImage, date, temperature, description }
     });
 
-    console.log(renderedData);
+    // console.log(renderedData);
 
     return (
         <div className="grid allWatherBox lg:grid-cols-7 md:grid-cols-5" style={{ backgroundImage: 'url(https://image.slidesdocs.com/responsive-images/background/3d-creative-for-website-powerpoint-background_3ecbad0de1__960_540.jpg)' }}>
