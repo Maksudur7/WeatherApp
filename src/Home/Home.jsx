@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form"
 import { WiHumidity } from "react-icons/wi";
 import { FaCloudShowersWater } from "react-icons/fa6";
 import ToggolButton from "./ToggolButton";
+import AllWather from "./AllWather";
 
 
 
@@ -11,15 +12,13 @@ const Home = () => {
 
     const [data, setData] = useState({})
     const [search, setSearch] = useState("")
+    const [allDayData, setAllDayData] = useState([])
+    const [tem, setTem] = useState(data?.main?.temp)
     const {
         register,
         handleSubmit,
     } = useForm()
-
     const onSubmit = (data) => setSearch(data.search)
-
-
-
     const api = {
         key: `b1605d6bdb8482fa40b1f0f850c0581a`,
         base: `https://api.openweathermap.org/data/2.5`
@@ -31,18 +30,25 @@ const Home = () => {
         fetch(`${api.base}/weather?q=${search}&units=metric&APPID=${api.key}`)
             .then((res) => res.json())
             .then((result) => {
-                // console.log(result.base)
                 setData(result)
+            });
+
+        fetch(`${api.base}/forecast?q=${search}&units=metric&APPID=${api.key}`)
+            .then((res) => res.json())
+            .then((forecastData) => {
+                // console.log("5-day forecast data:", forecastData);
+                setAllDayData(forecastData)
             });
     }, [api.base, api.key, search])
 
-    console.log(data?.main?.temp);
 
-    const [tem, setTem] = useState(data?.main?.temp)
 
     if (data.cod === undefined) {
         return;
     }
+    console.log(allDayData);
+
+
 
 
 
@@ -105,6 +111,11 @@ const Home = () => {
                     }
 
                 </div>
+            </div>
+            <div className="mt-20">
+                {
+                    data.cod === '400' || data.cod === undefined ? <h1 className="text-white text-4xl font-bold">No Datas Longer</h1> : <AllWather allDayData={allDayData}></AllWather>
+                }
             </div>
         </div>
     );
